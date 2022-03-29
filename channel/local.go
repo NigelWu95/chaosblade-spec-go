@@ -384,14 +384,9 @@ func execCommand(ctx context.Context, command, args string) *spec.Response {
 		ctx = newCtx
 	}
 	command = strings.Replace(command, " ", `\ `, -1)
-	var cmd *exec.Cmd
-	if command == "" {
-		logrus.Debugf("Command: /bin/sh -c %s.(Process command isn't specified, so use default /bin/sh)", args)
-		cmd = exec.CommandContext(ctx, "/bin/sh", "-c", args)
-	} else {
-		logrus.Debugf("Command: %s %s", command, args)
-		cmd = exec.CommandContext(ctx, command, args)
-	}
+	logrus.Debugf("Command: %s %s", command, args)
+	// TODO /bin/sh 的问题
+	cmd := exec.CommandContext(ctx, "/bin/sh", "-c", command + " " + args)
 	output, err := cmd.CombinedOutput()
 	outMsg := string(output)
 	logrus.Debugf("Command Result, output: %v, err: %v", outMsg, err)
